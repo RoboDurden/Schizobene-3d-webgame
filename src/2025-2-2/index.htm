@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<link rel="shortcut icon" type="image/png" href="../favicon.png">
-	<title>the Schizo-bene online game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" type="image/png" href="../favicon.png">
+    <title>the Schizo-bene online game</title>
     <style>
-        body { margin: 0; }
-        canvas { display: block; }
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+
         #hud {
             position: fixed;
             top: 10px;
@@ -14,34 +21,33 @@
             color: white;
             font-family: Arial;
             font-size: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-		#gameHelp
-		{
+
+        #gameHelp {
             display: none;
             position: fixed;
             bottom: 10%;
             left: 50%;
             transform: translate(-50%, 0%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             padding: 20px;
             color: white;
             text-align: center;
             border-radius: 10px;
-		}
+        }
 
-		div.Help
-		{
+        div.Help {
             display: none;
             position: fixed;
-            left:10%;
-            right:10%;
-            background: rgba(0,0,0,0.4);
+            left: 10%;
+            right: 10%;
+            background: rgba(0, 0, 0, 0.4);
             padding: 5px;
             color: white;
             text-align: center;
             border-radius: 10px;
-		}
+        }
 
 
         #gameOver {
@@ -50,13 +56,15 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             padding: 20px;
             color: white;
             text-align: center;
             border-radius: 10px;
         }
-        #gameOver input[type="email"], #gameOver label {
+
+        #gameOver input[type="email"],
+        #gameOver label {
             margin: 5px 0;
             display: block;
         }
@@ -71,40 +79,45 @@
             pointer-events: none;
             display: none;
         }
+
         .grid-line {
             position: absolute;
             background: rgba(255, 255, 255, 0.3);
         }
+
         .grid-vertical {
             width: 1px;
             height: 100%;
             top: 0;
         }
+
         .grid-horizontal {
             height: 1px;
             width: 100%;
             left: 0;
         }
-
     </style>
 </head>
+
 <body>
     <div id="hud"></div>
     <div id="gameOver">
         <h2>Game Over!</h2>
         <p>level: <span id="finalScore">0</span></p>
-		<form onSubmit="saveScore(); return false;">
-        <input type="text" id="playerName" placeholder="Enter your name">
-        <input type="email" id="playerEmail" placeholder="email if you like">
-        <label><input type="checkbox" id="playerSchizo"> did an inner voice help ?</label>
-        <input type="submit">Save Score</input><br/>
-		</form>
-        <center><table id="topten"></table></center>
+        <form onSubmit="saveScore(); return false;">
+            <input type="text" id="playerName" placeholder="Enter your name">
+            <input type="email" id="playerEmail" placeholder="email if you like">
+            <label><input type="checkbox" id="playerSchizo"> did an inner voice help ?</label>
+            <input type="submit">Save Score</input><br />
+        </form>
+        <center>
+            <table id="topten"></table>
+        </center>
     </div>
 
     <div class="Help" id="Help1" style="top:5%;"></div>
 
-    <div class="Help" id="Help2"  style="bottom:5%"></div>
+    <div class="Help" id="Help2" style="bottom:5%"></div>
     <div id="touchGrid">
         <div class="grid-line grid-vertical" style="left: 33.333%"></div>
         <div class="grid-line grid-vertical" style="left: 66.666%"></div>
@@ -117,11 +130,10 @@
 
         const bBeta = (location.hostname === "localhost" || location.hostname === "127.0.0.1");
 
-		function CPos(x,y)
-		{
-			this.x = x;
-			this.y = y;
-		}
+        function CPos(x, y) {
+            this.x = x;
+            this.y = y;
+        }
         const shapes = ['cube', 'pyramid', 'ball'];
         const colors = [0xff0000, 0x00ff00, 0x0000ff];
 
@@ -130,7 +142,7 @@
         let scene, camera, renderer;
         let playerX = 0, playerY = 0, playerZ = 0;
         let playerX2 = 0, playerY2 = 0; // animated player xy position
-    	let yOld = 0;
+        let yOld = 0;
         let currentSpeed = 0;
         let level = 0;
         //let score = 0;
@@ -145,20 +157,20 @@
         const STAGE_DEMO = 8;
         let gameStage = 0;
         let topScores = [];
-		let iGameType = 1;
+        let iGameType = 1;
         let iRegularWalls = 0;
-		let aGameHelp = [];
+        let aGameHelp = [];
         let bPause = false;
         let iCheat = 0;
         let iBug = 0;
         let iDemo = 0;
         let iTimeLast = 0;
 
-		let rLight = null;
+        let rLight = null;
         let gridVisible = false;
 
         init();
-		NewGame();
+        NewGame();
         animate();
 
         function init() {
@@ -175,61 +187,59 @@
 
             scene.add(new THREE.AmbientLight(0x404040));
 
-    		//generateLevel();
-			//lives=1;
-			//handleCollision();
+            //generateLevel();
+            //lives=1;
+            //handleCollision();
         }
 
         function generateLevel() {
-			rLight.intensity = 0;
+            rLight.intensity = 0;
 
             walls.forEach(wall => scene.remove(wall.mesh));
             walls = [];
-            playerZ = -distance * ((level+20)/20);
-			playerX = playerY = 0;
+            playerZ = -distance * ((level + 20) / 20);
+            playerX = playerY = 0;
 
             objectTypes = createShuffledObjectTypes();
-			CreateTargetObjectTyp();
+            CreateTargetObjectTyp();
             // Create 8 regular walls
-			let oGap = new CPos(0,0);
-            for(let i = 0; i < iRegularWalls; i++) {
+            let oGap = new CPos(0, 0);
+            for (let i = 0; i < iRegularWalls; i++) {
                 const zPos = 1 + i * distance;
-                oGap = createWall(zPos, objectTypes[i],oGap);
+                oGap = createWall(zPos, objectTypes[i], oGap);
             }
 
             // Create final wall
-            createFinalWall((iRegularWalls)*distance -playerZ);
+            createFinalWall((iRegularWalls) * distance - playerZ);
 
             currentSpeed = 0.02 + level * 0.004;
         }
 
         function createShuffledObjectTypes() {
             const types = [];
-            
+
             shapes.forEach(shape => {
                 colors.forEach(color => {
                     types.push({ shape, color });
                 });
             });
 
-            for(let i = types.length - 1; i > 0; i--) {
+            for (let i = types.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [types[i], types[j]] = [types[j], types[i]];
             }
             return types;
         }
 
-		function _CreateObject(x,y,z,shape,scale=1,color="#999999",yOffset=0)
-		{
-			let mesh = createObjectMesh({shape,color});
-			mesh.position.set(x, y+yOffset, z);
-			mesh.scale.set(scale, scale, scale);
+        function _CreateObject(x, y, z, shape, scale = 1, color = "#999999", yOffset = 0) {
+            let mesh = createObjectMesh({ shape, color });
+            mesh.position.set(x, y + yOffset, z);
+            mesh.scale.set(scale, scale, scale);
             mesh.yOffset = yOffset;
-			return mesh;
-		}
+            return mesh;
+        }
 
-		function NewGame()
-		{
+        function NewGame() {
             iDemo = 1000;
             level = (gameStage & STAGE_SCORES) ? Math.max(0, level - 3) : 0;
             //score = 10*level;
@@ -239,293 +249,272 @@
 
             walls.forEach(wall => scene.remove(wall.mesh));
             walls = [];
-			aGameHelp.forEach(mesh => scene.remove(mesh));
-			aGameHelp = [];
+            aGameHelp.forEach(mesh => scene.remove(mesh));
+            aGameHelp = [];
 
             let sTop = "";
             let sBottom = "";
-			switch (iGameType)
-			{
+            switch (iGameType) {
                 case 0:
-                sTop = "player: dodge the 8 walls and hit the missing ninth  object in final wall.";
-                sBottom = "inner voice: find the missing ninth object.";
-                _HelpAddLine([
-                    _CreateObject(-5,0,1,"ball",1,colors[0])
-                    ,_CreateObject(-4,0,1,"cube",1,colors[0])
-                    ,_CreateObject(-3,0,1,"pyramid",1,colors[1])
-                    ,_CreateObject(-2,0,1,"ball",1,colors[1])
-                    ,_CreateObject(-1,0,1,"pyramid",1,colors[0])
-                    ,_CreateObject(0,0,1,"pyramid",1,colors[2])
-                    ,_CreateObject(1,0,1,"ball",1,colors[2])
-                    ,_CreateObject(2,0,1,"cube",1,colors[1])
-                    ,_CreateObject(4,0,1,"-",1,0xffffff,-0.2),
-                    ,_CreateObject(4,0,1,"-",1,0xffffff,0.2),
-                    ,_CreateObject(5,0,1,"cube",1,colors[2])
-                    //,_CreateObject(5,0,1,"base",1,0xffff00,0.5)
-                    //,_CreateObject(5,0,1,"base",1,0xffff00,-0.5)
-                    ],0);
+                    sTop = "player: dodge the 8 walls and hit the missing ninth  object in final wall.";
+                    sBottom = "inner voice: find the missing ninth object.";
+                    _HelpAddLine([
+                        _CreateObject(-5, 0, 1, "ball", 1, colors[0])
+                        , _CreateObject(-4, 0, 1, "cube", 1, colors[0])
+                        , _CreateObject(-3, 0, 1, "pyramid", 1, colors[1])
+                        , _CreateObject(-2, 0, 1, "ball", 1, colors[1])
+                        , _CreateObject(-1, 0, 1, "pyramid", 1, colors[0])
+                        , _CreateObject(0, 0, 1, "pyramid", 1, colors[2])
+                        , _CreateObject(1, 0, 1, "ball", 1, colors[2])
+                        , _CreateObject(2, 0, 1, "cube", 1, colors[1])
+                        , _CreateObject(4, 0, 1, "-", 1, 0xffffff, -0.2),
+                        , _CreateObject(4, 0, 1, "-", 1, 0xffffff, 0.2),
+                        , _CreateObject(5, 0, 1, "cube", 1, colors[2])
+                        //,_CreateObject(5,0,1,"base",1,0xffff00,0.5)
+                        //,_CreateObject(5,0,1,"base",1,0xffff00,-0.5)
+                    ], 0);
                     break;
                 case 1:
-                sTop = "player: color in final wall is last of the three possible colors. Ignore the first  wall.";
-                sBottom = "inner voice: geometry in final wall is last of the three possible geometries. Ignore the first  wall.";
-                _HelpAddLine([
-                    _CreateObject(0,1,1,"ball",0.5)
-                    ,_CreateObject(0,1,1,"cube",1,colors[0])
-                    ,_CreateObject(0,1,1,"pyramid",1,colors[1])
-                    ,_CreateObject(0,1,1,"ball",0.5)
-                    ,_CreateObject(0,1,1,"pyramid",0.5)
-                    ,_CreateObject(0,1,1,"pyramid",1,colors[2])
-                    ,_CreateObject(0,1,1,"base",1,0xffff00,0.5)
-                    ,_CreateObject(0,1,1,"base",1,0xffff00,-0.5)
-                    //,_CreateObject(0,1,1,"ball",0.5,colors[1])
-                ],1);
-                _HelpAddLine([
-                    _CreateObject(0,-1,1,"ball",0.5)
-                    ,_CreateObject(0,-1,1,"cube")
-                    ,_CreateObject(0,-1,1,"pyramid")
-                    ,_CreateObject(0,-1,1,"ball")
-                    ,_CreateObject(0,-1,1,"base",1,0xffff00,0.5)
-                    ,_CreateObject(0,-1,1,"base",1,0xffff00,-0.5)
-                    ,_CreateObject(0,-1,1,"pyramid",0.5)
-                    ,_CreateObject(0,-1,1,"pyramid",0.5)
-                    //,_CreateObject(0,-1,1,"ball",1)
-                ],1);
+                    sTop = "player: color in final wall is last of the three possible colors. Ignore the first  wall.";
+                    sBottom = "inner voice: geometry in final wall is last of the three possible geometries. Ignore the first  wall.";
+                    _HelpAddLine([
+                        _CreateObject(0, 1, 1, "ball", 0.5)
+                        , _CreateObject(0, 1, 1, "cube", 1, colors[0])
+                        , _CreateObject(0, 1, 1, "pyramid", 1, colors[1])
+                        , _CreateObject(0, 1, 1, "ball", 0.5)
+                        , _CreateObject(0, 1, 1, "pyramid", 0.5)
+                        , _CreateObject(0, 1, 1, "pyramid", 1, colors[2])
+                        , _CreateObject(0, 1, 1, "base", 1, 0xffff00, 0.5)
+                        , _CreateObject(0, 1, 1, "base", 1, 0xffff00, -0.5)
+                        //,_CreateObject(0,1,1,"ball",0.5,colors[1])
+                    ], 1);
+                    _HelpAddLine([
+                        _CreateObject(0, -1, 1, "ball", 0.5)
+                        , _CreateObject(0, -1, 1, "cube")
+                        , _CreateObject(0, -1, 1, "pyramid")
+                        , _CreateObject(0, -1, 1, "ball")
+                        , _CreateObject(0, -1, 1, "base", 1, 0xffff00, 0.5)
+                        , _CreateObject(0, -1, 1, "base", 1, 0xffff00, -0.5)
+                        , _CreateObject(0, -1, 1, "pyramid", 0.5)
+                        , _CreateObject(0, -1, 1, "pyramid", 0.5)
+                        //,_CreateObject(0,-1,1,"ball",1)
+                    ], 1);
 
-                _HelpAddLine([
-                    _CreateObject(2,0,1,"-",1,0xffffff,0.2),
-                    _CreateObject(2,0,1,"-",1,0xffffff,-0.2),
-                    _CreateObject(3,0,1,"ball",1,colors[2]),
-                ]);
+                    _HelpAddLine([
+                        _CreateObject(2, 0, 1, "-", 1, 0xffffff, 0.2),
+                        _CreateObject(2, 0, 1, "-", 1, 0xffffff, -0.2),
+                        _CreateObject(3, 0, 1, "ball", 1, colors[2]),
+                    ]);
 
-				break;
+                    break;
 
-            case 2:
-                iRegularWalls = 9;
-                sTop = "player: color in final wall  follows right after you have passed all the three possible colors. Ignore the first  wall.";
-                sBottom = "inner voice: geometry in final wall follows right after you have passed all the three possible geometries. Ignore the first  wall.";
-                _HelpAddLine([
-                    _CreateObject(0,1,1,"ball",0.5),
-                    _CreateObject(0,1,1,"cube",1,colors[0]),
-                    _CreateObject(0,1,1,"pyramid",1,colors[1]),
-                    _CreateObject(0,1,1,"ball",0.5),
-                    _CreateObject(0,1,1,"pyramid",0.5),
-                    _CreateObject(0,1,1,"pyramid",1,colors[2]),
-                    _CreateObject(0,1,1,"ball",0.8,colors[2]),
-                    _CreateObject(0,1,1,"base",1,0xffff00,0.5),
-                    _CreateObject(0,1,1,"base",1,0xffff00,-0.5)
-                ],1);
-                _HelpAddLine([
-                    _CreateObject(0,-1,1,"ball",0.5),
-                    _CreateObject(0,-1,1,"cube"),
-                    _CreateObject(0,-1,1,"pyramid"),
-                    _CreateObject(0,-1,1,"ball"),
-                    _CreateObject(0,-1,1,"pyramid",0.8),
-                    _CreateObject(0,-1,1,"base",1,0xffff00,0.5),
-                    _CreateObject(0,-1,1,"base",1,0xffff00,-0.5),
-                    _CreateObject(0,-1,1,"pyramid",0.5),
-                    _CreateObject(0,-1,1,"ball",0.5),
-                ],1);
+                case 2:
+                    iRegularWalls = 9;
+                    sTop = "player: color in final wall  follows right after you have passed all the three possible colors. Ignore the first  wall.";
+                    sBottom = "inner voice: geometry in final wall follows right after you have passed all the three possible geometries. Ignore the first  wall.";
+                    _HelpAddLine([
+                        _CreateObject(0, 1, 1, "ball", 0.5),
+                        _CreateObject(0, 1, 1, "cube", 1, colors[0]),
+                        _CreateObject(0, 1, 1, "pyramid", 1, colors[1]),
+                        _CreateObject(0, 1, 1, "ball", 0.5),
+                        _CreateObject(0, 1, 1, "pyramid", 0.5),
+                        _CreateObject(0, 1, 1, "pyramid", 1, colors[2]),
+                        _CreateObject(0, 1, 1, "ball", 0.8, colors[2]),
+                        _CreateObject(0, 1, 1, "base", 1, 0xffff00, 0.5),
+                        _CreateObject(0, 1, 1, "base", 1, 0xffff00, -0.5)
+                    ], 1);
+                    _HelpAddLine([
+                        _CreateObject(0, -1, 1, "ball", 0.5),
+                        _CreateObject(0, -1, 1, "cube"),
+                        _CreateObject(0, -1, 1, "pyramid"),
+                        _CreateObject(0, -1, 1, "ball"),
+                        _CreateObject(0, -1, 1, "pyramid", 0.8),
+                        _CreateObject(0, -1, 1, "base", 1, 0xffff00, 0.5),
+                        _CreateObject(0, -1, 1, "base", 1, 0xffff00, -0.5),
+                        _CreateObject(0, -1, 1, "pyramid", 0.5),
+                        _CreateObject(0, -1, 1, "ball", 0.5),
+                    ], 1);
 
-                _HelpAddLine([
-                    _CreateObject(3,0,1,"-",1,0xffffff,0.2),
-                    _CreateObject(3,0,1,"-",1,0xffffff,-0.2),
-                    _CreateObject(4,0,1,"pyramid",1,colors[2]),
-                ]);
+                    _HelpAddLine([
+                        _CreateObject(3, 0, 1, "-", 1, 0xffffff, 0.2),
+                        _CreateObject(3, 0, 1, "-", 1, 0xffffff, -0.2),
+                        _CreateObject(4, 0, 1, "pyramid", 1, colors[2]),
+                    ]);
 
-				break;
-			}
-			//rLight.intensity = 1;
+                    break;
+            }
+            //rLight.intensity = 1;
             playerZ = -4; playerX = playerY = 0;
 
             let r = document.getElementById('Help1');
             r.innerHTML = `<h2>${sTop}</h2>`;
-			r.style.display = 'block';
+            r.style.display = 'block';
 
             r = document.getElementById('Help2');
             r.innerHTML = "<h2>" + sBottom + '<form onSubmit="StartGame(); return false;"><input type="submit" id="startGame" value="start game"></input></form></h2>';
-			r.style.display = 'block';
-			document.getElementById('startGame').focus();
-		}
+            r.style.display = 'block';
+            document.getElementById('startGame').focus();
+        }
 
-        function _HelpAddLine(aO,bSetX)
-        {
-			let x = 5;//Math.round(aO.length/2);
-			aO.forEach(mesh => 
-			{
-                if (bSetX)
-                {
-                    if (!mesh.yOffset)	x--;
+        function _HelpAddLine(aO, bSetX) {
+            let x = 5;//Math.round(aO.length/2);
+            aO.forEach(mesh => {
+                if (bSetX) {
+                    if (!mesh.yOffset) x--;
                     mesh.position.x = x;
                 }
                 else
                     mesh.position.x *= -1;
 
-				scene.add(mesh);
+                scene.add(mesh);
                 aGameHelp.push(mesh);
-			});
+            });
 
 
 
         }
 
-		function StartGame(iStage = STAGE_RUNNING)
-		{
+        function StartGame(iStage = STAGE_RUNNING) {
             //document.getElementById('body').focus();
             iDemo = 0;
 
-			aGameHelp.forEach(mesh => scene.remove(mesh));
-			aGameHelp = [];
+            aGameHelp.forEach(mesh => scene.remove(mesh));
+            aGameHelp = [];
 
             document.getElementById('Help1').style.display = 'none';
             document.getElementById('Help2').style.display = 'none';
-			
-			setTimeout(() => {
-				generateLevel();
-                gameStage = iStage;
-			}, 100);
-		}
 
-		function CreateTargetObjectTyp()
-		{
+            setTimeout(() => {
+                generateLevel();
+                gameStage = iStage;
+            }, 100);
+        }
+
+        function CreateTargetObjectTyp() {
             //targetObjectType = objectTypes[2];  return;
             targetObjectType = null;
             let aShape = [];
             let aColor = [];
 
-			switch (iGameType)
-            {
-            case 0:
-                targetObjectType = objectTypes[8];
-                return;
+            switch (iGameType) {
+                case 0:
+                    targetObjectType = objectTypes[8];
+                    return;
 
-            case 1:
-				for (let i=1; i<7; i++)
-				{
-					let r = objectTypes[i];
-					if (aShape.indexOf(r.shape) > -1)	continue;
-					aShape.push(r.shape);
-					if (aShape.length == 3)
-					{
-                        aShape[0] = r.shape;
-                        r.bShape = r.shape;
-						break;
-					}
-				}
-				for (let i=1; i<7; i++)
-				{
-					let r = objectTypes[i];
-					if (aColor.indexOf(r.color) > -1)	continue;
-					aColor.push(r.color);
-					if (aColor.length == 3)
-					{
-                        aColor[0] = r.color;
-                        r.cColor = r.color;
-						break;
-					}
-				}
-                break;
+                case 1:
+                    for (let i = 1; i < 7; i++) {
+                        let r = objectTypes[i];
+                        if (aShape.indexOf(r.shape) > -1) continue;
+                        aShape.push(r.shape);
+                        if (aShape.length == 3) {
+                            aShape[0] = r.shape;
+                            r.bShape = r.shape;
+                            break;
+                        }
+                    }
+                    for (let i = 1; i < 7; i++) {
+                        let r = objectTypes[i];
+                        if (aColor.indexOf(r.color) > -1) continue;
+                        aColor.push(r.color);
+                        if (aColor.length == 3) {
+                            aColor[0] = r.color;
+                            r.cColor = r.color;
+                            break;
+                        }
+                    }
+                    break;
 
-            case 2:
-				for (let i=1; i<7; i++)
-				{
-					let r = objectTypes[i];
-					if (aShape.indexOf(r.shape) > -1)	continue;
-					aShape.push(r.shape);
-					if (aShape.length == 3)
-					{
-                        aShape[0] = objectTypes[i+1].shape;
-                        objectTypes[i+1].bShape = aShape[0];
-						break;
-					}
-				}
-				for (let i=1; i<7; i++)
-				{
-					let r = objectTypes[i];
-					if (aColor.indexOf(r.color) > -1)	continue;
-					aColor.push(r.color);
-					if (aColor.length == 3)
-					{
-                        aColor[0] = objectTypes[i+1].color;
-                        objectTypes[i+1].cColor = aColor[0];
-						break;
-					}
-				}
-                break;
+                case 2:
+                    for (let i = 1; i < 7; i++) {
+                        let r = objectTypes[i];
+                        if (aShape.indexOf(r.shape) > -1) continue;
+                        aShape.push(r.shape);
+                        if (aShape.length == 3) {
+                            aShape[0] = objectTypes[i + 1].shape;
+                            objectTypes[i + 1].bShape = aShape[0];
+                            break;
+                        }
+                    }
+                    for (let i = 1; i < 7; i++) {
+                        let r = objectTypes[i];
+                        if (aColor.indexOf(r.color) > -1) continue;
+                        aColor.push(r.color);
+                        if (aColor.length == 3) {
+                            aColor[0] = objectTypes[i + 1].color;
+                            objectTypes[i + 1].cColor = aColor[0];
+                            break;
+                        }
+                    }
+                    break;
 
             }
 
-            for (i in objectTypes)
-            {
+            for (i in objectTypes) {
                 let o = objectTypes[i];
-                if (o.shape == aShape[0] && o.color == aColor[0] )
-                {
+                if (o.shape == aShape[0] && o.color == aColor[0]) {
                     targetObjectType = o;
                     return;
                 }
             }
 
-            if (!targetObjectType)
-            {
+            if (!targetObjectType) {
                 targetObjectType = objectTypes[2];
                 alert("third wall is target !");
             }
 
             //alert("target is missing wall !!!");
-			//targetObjectType = objectTypes[8];
+            //targetObjectType = objectTypes[8];
 
-		}
+        }
 
 
-        function createWall(zPos, type, oGapPrevious) 
-		{
-			let aGap = [];
-            for(let x = -1; x <= 1; x++) 
-			{
-                for(let y = -1; y <= 1; y++) 
-				{
-					const iDx = Math.abs(oGapPrevious.x-x);
-					if (iDx > 1)	continue;
-					const iDy = Math.abs(oGapPrevious.y-y);
-					if (iDy > 1)	continue;
-					if (iDx + iDy == 0)	continue;
-					aGap.push( new CPos(x,y) );
-				}
-			}
-			let oGap =  aGap[Math.floor(Math.random() * aGap.length)];
+        function createWall(zPos, type, oGapPrevious) {
+            let aGap = [];
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
+                    const iDx = Math.abs(oGapPrevious.x - x);
+                    if (iDx > 1) continue;
+                    const iDy = Math.abs(oGapPrevious.y - y);
+                    if (iDy > 1) continue;
+                    if (iDx + iDy == 0) continue;
+                    aGap.push(new CPos(x, y));
+                }
+            }
+            let oGap = aGap[Math.floor(Math.random() * aGap.length)];
             const gapX = oGap.x;
             const gapY = oGap.y;
 
-            for(let x = -1; x <= 1; x++) {
-                for(let y = -1; y <= 1; y++) {
-                    if(x === gapX && y === oGap.y) continue;
-                    
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
+                    if (x === gapX && y === oGap.y) continue;
+
                     const mesh = createObjectMesh(type);
                     mesh.position.set(x, y, zPos);
                     scene.add(mesh);
-                    walls.push({ 
-                        z: zPos, 
+                    walls.push({
+                        z: zPos,
                         oGap: oGap,
-                        gapX, 
-                        gapY, 
-                        mesh, 
-                        type, 
-                        isFinal: false 
+                        gapX,
+                        gapY,
+                        mesh,
+                        type,
+                        isFinal: false
                     });
                 }
             }
-			return oGap;
+            return oGap;
         }
 
         function createFinalWall(zPos) {
             const positions = [];
-            for(let x = -1; x <= 1; x++) {
-                for(let y = -1; y <= 1; y++) {
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
                     positions.push({ x, y });
                 }
             }
-            
+
             // Shuffle positions
-            for(let i = positions.length - 1; i > 0; i--) {
+            for (let i = positions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [positions[i], positions[j]] = [positions[j], positions[i]];
             }
@@ -549,9 +538,9 @@
 
         function createObjectMesh(type) {
             let geometry;
-			let rotX = 0;
-            switch(type.shape) {
-                case 'cube': 
+            let rotX = 0;
+            switch (type.shape) {
+                case 'cube':
                     geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
                     break;
                 case 'pyramid':
@@ -560,50 +549,45 @@
                 case 'ball':
                     geometry = new THREE.SphereGeometry(0.45, 32, 32);
                     break;
-				case 'disc':
-                    geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1,32);
-					rotX = Math.PI / 2;
+                case 'disc':
+                    geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 32);
+                    rotX = Math.PI / 2;
                     break;
-                    case 'base': 
+                case 'base':
                     geometry = new THREE.BoxGeometry(1, 0.1, 1);
                     break;
-                    case '-': 
+                case '-':
                     geometry = new THREE.BoxGeometry(0.7, 0.1, 0.2);
                     break;
             }
-            const material = new THREE.MeshPhongMaterial({ 
+            const material = new THREE.MeshPhongMaterial({
                 color: type.color,
-                shininess: 100 
+                shininess: 100
             });
 
-			let mesh = new THREE.Mesh(geometry, material);
-			mesh.rotation.x = rotX;
+            let mesh = new THREE.Mesh(geometry, material);
+            mesh.rotation.x = rotX;
 
             return mesh;
         }
 
-		function KeyDown(key,bKey)
-		{
-            if (bKey)
-            {
+        function KeyDown(key, bKey) {
+            if (bKey) {
                 gridVisible = false;
                 document.getElementById('touchGrid').style.display = 'none';
             }
 
-            switch (key)
-            {
+            switch (key) {
                 case "ArrowRight":
-                    if (gameStage == STAGE_HELP)
-                    {
-                        iGameType = (iGameType+1)%3;
+                    if (gameStage == STAGE_HELP) {
+                        iGameType = (iGameType + 1) % 3;
                         NewGame();
                     }
                     else if (playerX > -1) playerX--;
                     break;
                 case "ArrowLeft":
-                    if (gameStage == STAGE_HELP)
-                    {
-                        iGameType = (iGameType+2)%3;
+                    if (gameStage == STAGE_HELP) {
+                        iGameType = (iGameType + 2) % 3;
                         NewGame();
                     }
                     else if (playerX < 1) playerX++;
@@ -611,23 +595,22 @@
                 case "ArrowUp":
                     if (playerY < 1) playerY++;
                     break;
-                case "ArrowDown": 
+                case "ArrowDown":
                     if (playerY > -1) playerY--;
                     break;
-                case " ":   
-                    if (gameStage & (STAGE_RUNNING|STAGE_DEMO))
-                    {
-                        playerZ = Math.ceil((playerZ+0.5)/distance)*distance-0.5;
+                case " ":
+                    if (gameStage & (STAGE_RUNNING | STAGE_DEMO)) {
+                        playerZ = Math.ceil((playerZ + 0.5) / distance) * distance - 0.5;
                     }
-                break;
-                    case "q":
+                    break;
+                case "q":
                     iCheat = 10;
                     break;
                 case "d":
                     iDemo = 1;
                     break;
-                case "p":   
-                    if (gameStage & (STAGE_RUNNING|STAGE_DEMO))
+                case "p":
+                    if (gameStage & (STAGE_RUNNING | STAGE_DEMO))
                         bPause = !bPause;
                     break;
                 case "Escape":
@@ -636,80 +619,73 @@
                     break;
 
             }
-        
 
 
-		}
 
-		function handleTouch(event) 
-		{
-			event.preventDefault();
+        }
+
+        function handleTouch(event) {
+            event.preventDefault();
             if (!gridVisible) {
                 gridVisible = true;
                 document.getElementById('touchGrid').style.display = 'block';
             }
 
-			let touches = event.touches;
+            let touches = event.touches;
             if (!touches)   // mouse down
             {
                 touches = [event];
             }
-			if (touches.length > 0) {
-				const touch = touches[0];
-				const screenWidth = window.innerWidth;
-				const screenHeight = window.innerHeight/2;  // only lower half of the screen
-				
-				// Calculate grid region
-				const regionX = Math.floor(touch.clientX / (screenWidth / 3));
-				const regionY = Math.floor((touch.clientY-screenHeight) / (screenHeight / 3));
+            if (touches.length > 0) {
+                const touch = touches[0];
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight / 2;  // only lower half of the screen
 
-				// Convert to grid coordinates
-				let x = regionX === 0 ? 1 : regionX === 2 ? -1 : 0;
-				let y = regionY === 0 ? 1 : regionY === 2 ? -1 : 0;
+                // Calculate grid region
+                const regionX = Math.floor(touch.clientX / (screenWidth / 3));
+                const regionY = Math.floor((touch.clientY - screenHeight) / (screenHeight / 3));
 
-                if(gameStage & STAGE_RUNNING) 
-                {
+                // Convert to grid coordinates
+                let x = regionX === 0 ? 1 : regionX === 2 ? -1 : 0;
+                let y = regionY === 0 ? 1 : regionY === 2 ? -1 : 0;
+
+                if (gameStage & STAGE_RUNNING) {
                     playerX = x;
-				    playerY = y;
+                    playerY = y;
                 }
-                else if (gameStage == STAGE_DEMO)
-                {
+                else if (gameStage == STAGE_DEMO) {
                     NewGame();
                 }
-                else if(gameStage & STAGE_HELP) 
-                {
+                else if (gameStage & STAGE_HELP) {
                     if (x == -1) KeyDown("ArrowRight");
                     else if (x == 1) KeyDown("ArrowLeft");
                     else StartGame();
                 }
-               
 
-			}
-		}		
+
+            }
+        }
 
         function checkCollisions() {
             let wHit = 0;   // bit1 = hit, bit2 = passed, bit3 = level completed
             //walls.forEach(wall => 
             iCount = walls.length;
-            for (let i=0; i<iCount; i++)
-            {
+            for (let i = 0; i < iCount; i++) {
                 let wall = walls[0];
-                if(wall.passed || playerZ < wall.z-1) continue;
+                if (wall.passed || playerZ < wall.z - 1) continue;
 
-                
+
                 wall.passed = true;     // only check this object once
-                if(wall.isFinal) 
-                {
-                    if(wall.isTarget && Math.abs(playerX - wall.x) < 0.1 && Math.abs(playerY - wall.y) < 0.1) 
+                if (wall.isFinal) {
+                    if (wall.isTarget && Math.abs(playerX - wall.x) < 0.1 && Math.abs(playerY - wall.y) < 0.1)
                         wHit |= 4;
-                    else    
+                    else
                         wHit |= 1;
                 }
-                else
-                {
-                    if(Math.abs(playerX - wall.gapX) < 0.1 && Math.abs(playerY - wall.gapY) < 0.1) 
+                else {
+                    if (Math.abs(playerX - wall.gapX) < 0.1 && Math.abs(playerY - wall.gapY) < 0.1)
                         wHit |= 2;
-                    else    
+                    else
                         wHit |= 1;
                 }
                 walls.shift();
@@ -718,10 +694,8 @@
             }
             //);
 
-            if (wHit)
-            {
-                if (wHit & 4)
-                {
+            if (wHit) {
+                if (wHit & 4) {
                     //score += 2;
                     level++;
                     setTimeout(() => {
@@ -729,24 +703,21 @@
                     }, 100);
 
                 }
-                else if (wHit & 2)
-                {
-                        //score++;
-                        rLight.intensity = 2;
+                else if (wHit & 2) {
+                    //score++;
+                    rLight.intensity = 2;
                 }
-                else    handleCollision(); 
+                else handleCollision();
             }
         }
 
         function handleCollision() {
             lives--;
-            if(lives <= 0) {
+            if (lives <= 0) {
                 //if (score > 2)
                 //if (level > 0)
-                if (1)
-                {
-                    if(gameStage & STAGE_RUNNING) 
-                    {
+                if (1) {
+                    if (gameStage & STAGE_RUNNING) {
                         updateTopTenDisplay();
 
                         document.getElementById('gameOver').style.display = 'block';
@@ -764,38 +735,34 @@
 
         function updateCamera() {
 
-            if (playerX2 != playerX)    playerX2 = Math.round(20*playerX2 + (playerX2 < playerX ? 1 : -1)   )/20;
-            if (playerY2 != playerY)    playerY2 = Math.round(20*playerY2 + (playerY2 < playerY ? 1 : -1)   )/20;
-            
+            if (playerX2 != playerX) playerX2 = Math.round(20 * playerX2 + (playerX2 < playerX ? 1 : -1)) / 20;
+            if (playerY2 != playerY) playerY2 = Math.round(20 * playerY2 + (playerY2 < playerY ? 1 : -1)) / 20;
+
             camera.position.set(playerX2, playerY2, playerZ);
             camera.lookAt(playerX2, playerY2, playerZ + 5);
         }
 
         function updateObjects() {
-            
-            walls.forEach(wall => 
-            {
+
+            walls.forEach(wall => {
                 const iScale = Math.min(0.9, 0.9 * (1 + 3 / Math.max(1, wall.z - playerZ)));
                 let scale = wall.passed ? 0 : iScale;
-                if (bBeta && iCheat && wall.isTarget)  scale = 0.3;
+                if (bBeta && iCheat && wall.isTarget) scale = 0.3;
 
-                if (gameStage & STAGE_DEMO)
-                {
-                    let fDelta = (Math.abs( ((Date.now()/2+100) % 400) - 200) - 100)/100;   // repeats from +100 to -300 to +100 :-)
-                    let fDelta2 = (Math.abs( ((Date.now()/2+200) % 400) - 200) - 100)/100;   // repeats from +100 to -300 to +100 :-)
+                if (gameStage & STAGE_DEMO) {
+                    let fDelta = (Math.abs(((Date.now() / 2 + 100) % 400) - 200) - 100) / 100;   // repeats from +100 to -300 to +100 :-)
+                    let fDelta2 = (Math.abs(((Date.now() / 2 + 200) % 400) - 200) - 100) / 100;   // repeats from +100 to -300 to +100 :-)
                     //iBug = fDelta;
-                    if (wall.type.bShape)
-                    {
+                    if (wall.type.bShape) {
                         scale += -0.1 - 0.1 * fDelta;
                     }
-                    if (wall.type.cColor)
-                    {
-                        FadeRGB(wall.mesh.material.color, wall.type.cColor, 0.8+0.2*fDelta2);
+                    if (wall.type.cColor) {
+                        FadeRGB(wall.mesh.material.color, wall.type.cColor, 0.8 + 0.2 * fDelta2);
                     }
-                    if ( wall.isTarget)    scale *= 0.5;
+                    if (wall.isTarget) scale *= 0.5;
 
                 }
-                if ((rLight.intensity <= 0.1) && wall.z > 1)   scale = 0;
+                if ((rLight.intensity <= 0.1) && wall.z > 1) scale = 0;
 
 
                 wall.mesh.scale.set(scale, scale, scale);
@@ -803,92 +770,79 @@
             if (iCheat) iCheat--;
         }
 
-        function FadeRGB(oColor,iHex,fFade)
-        {
-            const r = ((iHex >> 16) & 0xff)/255;
-            const g = ((iHex >> 8) & 0xff)/255;
-            const b = (iHex & 0xff)/255;
-            oColor.setRGB(fFade*r, fFade*g, fFade*b);
+        function FadeRGB(oColor, iHex, fFade) {
+            const r = ((iHex >> 16) & 0xff) / 255;
+            const g = ((iHex >> 8) & 0xff) / 255;
+            const b = (iHex & 0xff) / 255;
+            oColor.setRGB(fFade * r, fFade * g, fFade * b);
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            
+
             //iBug = iGameType;
 
             let iTime = Date.now();
-            let iDelay = iTime-iTimeLast;
+            let iDelay = iTime - iTimeLast;
             if (iDelay > 1000) iDelay = 17;
             //iBug = iDelay;
             iTimeLast = iTime;
 
-			updateCamera();
-            if(gameStage & (STAGE_RUNNING|STAGE_DEMO)) 
-            {
-                if ((!bPause) || (rLight.intensity > 0.1)    )
-                {
-                    playerZ += currentSpeed * iDelay/17;
+            updateCamera();
+            if (gameStage & (STAGE_RUNNING | STAGE_DEMO)) {
+                if ((!bPause) || (rLight.intensity > 0.1)) {
+                    playerZ += currentSpeed * iDelay / 17;
 
-                    if (rLight.intensity < 1)	rLight.intensity += 0.005;
-    				else if (rLight.intensity > 1)	rLight.intensity -= 0.1;
-	    			rLight.intensity = Math.round(rLight.intensity*1000)/1000;
-                    
+                    if (rLight.intensity < 1) rLight.intensity += 0.005;
+                    else if (rLight.intensity > 1) rLight.intensity -= 0.1;
+                    rLight.intensity = Math.round(rLight.intensity * 1000) / 1000;
+
                 }
 
-                if (walls.length)
-                {
+                if (walls.length) {
                     let oNext = walls[0];
-                    let iDist = oNext.z-playerZ;
-                    if  (gameStage & STAGE_DEMO)
-                    {
-                        if (iDist < distance)
-                        {
-                            if (oNext.oGap)
-                            {
+                    let iDist = oNext.z - playerZ;
+                    if (gameStage & STAGE_DEMO) {
+                        if (iDist < distance) {
+                            if (oNext.oGap) {
                                 playerX = oNext.oGap.x;
                                 playerY = oNext.oGap.y;
                                 oNext.oGap = null;
                             }
-                            else if (oNext.isFinal)
-                            {
-                                if (!oNext.bDemo)
-                                {
+                            else if (oNext.isFinal) {
+                                if (!oNext.bDemo) {
                                     oNext.bDemo = true;
-                                    for (let i in walls)
-                                {
-                                    let wall = walls[i];
-                                    if (wall.isTarget)
-                                    {
-                                        playerX = wall.x;
-                                        playerY = wall.y;
-                                        break;
+                                    for (let i in walls) {
+                                        let wall = walls[i];
+                                        if (wall.isTarget) {
+                                            playerX = wall.x;
+                                            playerY = wall.y;
+                                            break;
+                                        }
                                     }
-                                }
                                 }
                             }
                         }
                     }
 
                 }
-                
+
                 updateObjects();
                 checkCollisions();
             }
-            else if (iDemo > 0)
-            {
+            else if (iDemo > 0) {
                 iDemo--;
-                if (!iDemo)
-                {
+                if (!iDemo) {
                     StartGame(STAGE_DEMO);
                 }
             }
 
             renderer.render(scene, camera);
-            let iDist = walls.length ? walls[0].z-playerZ : 0;
+            let iDist = walls.length ? walls[0].z - playerZ : 0;
             let sInfo = `Game: ${iGameType} | Lives: ${lives} | Level: ${level}`;	//  ${rLight.intensity}
-            if (iDemo)  sInfo += ` | ${Math.ceil(iDemo/100)}`;
-            if (bPause)   sInfo += ` | pause`;
-            if (iBug)   sInfo += ` | ${iBug}`;
+            if (iDemo) sInfo += ` | ${Math.ceil(iDemo / 100)}`;
+            if (bPause) sInfo += ` | pause`;
+            if (iBug) sInfo += ` | ${iBug}`;
             document.getElementById('hud').textContent = sInfo;
         }
 
@@ -902,11 +856,9 @@
         }
 
         // Update display function for new fields
-        function updateTopTenDisplay() 
-        {
+        function updateTopTenDisplay() {
             let sTopTen = "";
-            if (topScores[iGameType])
-            {
+            if (topScores[iGameType]) {
                 sTopTen = '<tr><th>level</th><th>Date</th><th>Name</th><th>Email</th><th>Schizo</th></tr>';
                 topScores[iGameType].forEach(o => {
                     sTopTen += `<tr><td>${o.level}</td><td>${o.time}</td><td>${o.name}</td><td>${o.email ? '*' : ''}</td><td>${o.schizo === '1' ? '*' : ''}</td></tr>`;
@@ -915,8 +867,7 @@
             document.getElementById('topten').innerHTML = sTopTen;
         }
 
-        async function saveScore() 
-        {
+        async function saveScore() {
             const name = document.getElementById('playerName').value.trim() || 'Anonymous';
             const email = document.getElementById('playerEmail').value.trim();
             const bShizo = document.getElementById('playerSchizo').checked;
@@ -935,18 +886,18 @@
                         schizo: bShizo ? 1 : 0
                     })
                 });
-                
+
                 if (!response.ok) throw new Error('Save failed');
-                
+
                 fetchTopScores();
             } catch (error) {
                 console.error('Save error:', error);
-				return;
+                return;
             }
 
             // Reset game
             document.getElementById('gameOver').style.display = 'none';
-			NewGame();
+            NewGame();
         }
 
         // Event listeners
@@ -956,10 +907,10 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        document.addEventListener('keydown', (e) => KeyDown(e.key,1));
-		document.addEventListener('touchstart', handleTouch);
-		document.addEventListener('touchmove', handleTouch);		
-		document.addEventListener('mousedown', handleTouch);
+        document.addEventListener('keydown', (e) => KeyDown(e.key, 1));
+        document.addEventListener('touchstart', handleTouch);
+        document.addEventListener('touchmove', handleTouch);
+        document.addEventListener('mousedown', handleTouch);
 
         // Update existing resize handler to maintain grid proportions
         window.addEventListener('resize', () => {
@@ -972,4 +923,5 @@
 
     </script>
 </body>
+
 </html>
