@@ -1,4 +1,4 @@
-# Schizobene-3d-webgame
+# Schizobene-3d-webgame (with DeepSeek)
 started as a https://chat.DeepSeek.com experiment :-)
 
 because stupid tech reviews simply prompted `write the game "snake" in python` an existing game :-( https://youtu.be/bOsvI3HYHgI?si=hdbKXkB9Yqc6ijBj&t=160
@@ -82,5 +82,4 @@ the future of ai coding will be awesome..
 - Then people with no programming skills at all could interactively add features and fix bugs.
 - And yeah, Deepseek should be able to play the game itself and analyze the video stream to see if its code works as it thinks it should :-)
 
-## the future of ai coding will be awesome..
-
+### the future of ai coding will be awesome..
