@@ -1,9 +1,12 @@
+prompt for https://chat.deepseek.com:
 
-The following is the code of a first-person 3d game where the player flys down into a tunnel and has to avoid objects on a 3x3 grid. The code already has keyboard input to move the players sideways on the 3x3 grid -1,-1 to +1,+1 with 0,0 being the center.
-Now please add the code for touch event of a smartphone. Simply divide the touchsceen in the same 9 regions of an imaginary 3x3 matrix and if the use touches the upper left region, the player positions change to x,y= -1,1. If he touches the center region, it will move him to the 0,0 position.
-After the first touch, draw a permanent grid of thin lines onto the screen so the player can see the 9 reigions to touch.
-And make sure that the screen can not be zoomed in by the touch events.
-This is the code you have to change:
+**The following is the code of a first-person 3d game where the player flys down into a tunnel and has to avoid objects on a 3x3 grid. The code already has keyboard input to move the players sideways on the 3x3 grid -1,-1 to +1,+1 with 0,0 being the center.\
+Now please add the code for touch event of a smartphone. Simply divide the touchsceen in the same 9 regions of an imaginary 3x3 matrix and if the use touches the upper left region, the player positions change to x,y= -1,1. If he touches the center region, it will move him to the 0,0 position.\
+After the first touch, draw a permanent grid of thin lines onto the screen so the player can see the 9 reigions to touch.\
+And make sure that the screen can not be zoomed in by the touch events.\
+This is the code you have to change:**
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -347,3 +350,4 @@ This is the code you have to change:
     </script>
 </body>
 </html>
+```
