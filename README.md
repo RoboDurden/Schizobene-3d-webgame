@@ -42,20 +42,20 @@ https://github.com/user-attachments/assets/8c194498-53c4-4f55-a817-0678119dcba3
 after that i only prompted DeepSeek to make changes to the code:
 
 
+[3 prompt add touch.md](https://github.com/RoboDurden/Schizobene-3d-webgame/blob/main/deepseek%20prompts/3%20prompt%20add%20touch.md)
 **The following is the code of a first-person 3d game where the player flys down into a tunnel and has to avoid objects on a 3x3 grid. The code already has keyboard input to move the players sideways on the 3x3 grid -1,-1 to +1,+1 with 0,0 being the center.\
 Now please add the code for touch event of a smartphone. Simply divide the touchsceen in the same 9 regions of an imaginary 3x3 matrix and if the use touches the upper left region, the player positions change to x,y= -1,1. If he touches the center region, it will move him to the 0,0 position.\
 After the first touch, draw a permanent grid of thin lines onto the screen so the player can see the 9 reigions to touch.\
 And make sure that the screen can not be zoomed in by the touch events.\
 This is the code you have to change:**
-[3 prompt add touch.md](https://github.com/RoboDurden/Schizobene-3d-webgame/blob/main/deepseek%20prompts/3%20prompt%20add%20touch.md)
 
+[4 prompt add ajax.md](https://github.com/RoboDurden/Schizobene-3d-webgame/blob/main/deepseek%20prompts/4%20prompt%20add%20ajax.md)
 **The following is the code of a first-person 3d game where the player flys down into a tunnel and has to avoid objects on a 3x3 grid. \
 The code already has a top ten list which is saved localy on the computer.\
 Please change this so that the data is sent to a php script which stores the data on a web server in a simple topScores.json text file.\
 At the beginning, this online data has to be fetched so every user sees the same top ten list.\
 Currently the top ten list only contains a name and the score. When prompted, also add an input field for an email address and a checkbox if the player is female.\
 This is the code you have to change:**
-[4 prompt add ajax.md](https://github.com/RoboDurden/Schizobene-3d-webgame/blob/main/deepseek%20prompts/4%20prompt%20add%20ajax.md)
 
 
 and then i had to fix bugs and add features for another few days !
