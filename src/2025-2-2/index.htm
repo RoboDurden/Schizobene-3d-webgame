@@ -103,7 +103,7 @@
     <div id="hud"></div>
     <div id="gameOver">
         <h2>Game Over!</h2>
-        <p>level: <span id="finalScore">0</span></p>
+        <p>level: <span id="finalLevel"></span></p>
         <form onSubmit="saveScore(); return false;">
             <input type="text" id="playerName" placeholder="Enter your name">
             <input type="email" id="playerEmail" placeholder="email if you like">
@@ -721,7 +721,7 @@
                         updateTopTenDisplay();
 
                         document.getElementById('gameOver').style.display = 'block';
-                        //document.getElementById('finalScore').textContent = score;
+                        document.getElementById('finalLevel').textContent = level;
                         document.getElementById('playerName').focus();
                         gameStage = STAGE_SCORES;
                         return;
