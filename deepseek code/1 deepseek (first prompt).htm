@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Avoidance Game</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #ui {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, raycaster;
+        let playerPosition = { x: 0, z: 0 };
+        let currentObjects = [];
+        let currentLevel = 0;
+        let score = 0;
+        let lives = 3;
+        let gameState = 'playing';
+        let currentSequence = [];
+        let targetObject = null;
+        let moveSpeed = 0.1;
+
+        const OBJECT_TYPES = [
+            ...['cube', 'pyramid', 'sphere'].flatMap(shape =>
+                ['red', 'green', 'blue'].map(color => ({ shape, color }))
+            )
+        ];
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            raycaster = new THREE.Raycaster();
+            
+            // Lighting
+            const light = new THREE.PointLight(0xffffff, 1, 100);
+            light.position.set(0, 10, 0);
+            scene.add(light);
+            scene.add(new THREE.AmbientLight(0x404040));
+
+            startLevel();
+            animate();
+        }
+
+        function createObject(type, position) {
+            let geometry;
+            switch(type.shape) {
+                case 'cube': geometry = new THREE.BoxGeometry(); break;
+                case 'pyramid': geometry = new THREE.ConeGeometry(0.5, 1, 4); break;
+                case 'sphere': geometry = new THREE.SphereGeometry(0.5); break;
+            }
+            
+            const material = new THREE.MeshPhongMaterial({ 
+                color: type.color,
+                transparent: true,
+                opacity: 0.8
+            });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(position.x, 0, position.z);
+            return mesh;
+        }
+
+        function startLevel() {
+            // Generate sequence
+            const shuffled = [...OBJECT_TYPES].sort(() => Math.random() - 0.5);
+            currentSequence = shuffled.slice(0, 8);
+            targetObject = shuffled[8];
+            
+            spawnNextObject();
+        }
+
+        function spawnNextObject() {
+            if(currentSequence.length === 0) {
+                spawnFinalGrid();
+                return;
+            }
+
+            const type = currentSequence.shift();
+            const pos = {
+                x: (Math.floor(Math.random() * 3) - 1) * 5,
+                z: (Math.floor(Math.random() * 3) - 1) * 5
+            };
+            
+            const obj = createObject(type, { x: pos.x, z: pos.z - 50 });
+            obj.targetPosition = new THREE.Vector3(pos.x, 0, pos.z);
+            obj.userData = { type, isFinal: false };
+            scene.add(obj);
+            currentObjects.push(obj);
+        }
+
+        function spawnFinalGrid() {
+            gameState = 'final';
+            const positions = [];
+            for(let x = -1; x <= 1; x++) {
+                for(let z = -1; z <= 1; z++) {
+                    positions.push({ x: x * 5, z: z * 5 });
+                }
+            }
+
+            const types = [...OBJECT_TYPES].sort(() => Math.random() - 0.5);
+            positions.forEach((pos, i) => {
+                const obj = createObject(types[i], pos);
+                obj.userData = { type: types[i], isFinal: true };
+                scene.add(obj);
+                currentObjects.push(obj);
+            });
+        }
+
+        function handleHit() {
+            lives--;
+            if(lives <= 0) gameOver();
+            else startLevel();
+        }
+
+        function gameOver() {
+            gameState = 'over';
+            alert(`Game Over! Score: ${score}`);
+        }
+
+        function updateUI() {
+            document.getElementById('ui').innerHTML = `
+                Score: ${score}<br>
+                Lives: ${lives}<br>
+                Level: ${currentLevel}
+            `;
+        }
+
+        function onMouseClick(event) {
+            if(gameState !== 'final') return;
+
+            const mouse = new THREE.Vector2();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(currentObjects);
+
+            if(intersects.length > 0) {
+                const obj = intersects[0].object;
+                if(JSON.stringify(obj.userData.type) === JSON.stringify(targetObject)) {
+                    score += 2;
+                    currentLevel++;
+                    moveSpeed *= 1.2;
+                    startLevel();
+                } else {
+                    handleHit();
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if(gameState === 'playing') {
+                currentObjects.forEach((obj, index) => {
+                    obj.position.lerp(obj.targetPosition, moveSpeed);
+                    
+                    if(obj.position.distanceTo(obj.targetPosition) < 0.5) {
+                        if(playerPosition.x === obj.targetPosition.x / 5 && 
+                           playerPosition.z === obj.targetPosition.z / 5) {
+                            handleHit();
+                        }
+                        scene.remove(obj);
+                        currentObjects.splice(index, 1);
+                        if(!obj.userData.isFinal) {
+                            score++;
+                            spawnNextObject();
+                        }
+                    }
+                });
+            }
+
+            updateUI();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if(gameState !== 'playing') return;
+
+            switch(e.key) {
+                case 'ArrowLeft': playerPosition.x = Math.max(-1, playerPosition.x - 1); break;
+                case 'ArrowRight': playerPosition.x = Math.min(1, playerPosition.x - -1); break;
+                case 'ArrowUp': playerPosition.z = Math.max(-1, playerPosition.z - 1); break;
+                case 'ArrowDown': playerPosition.z = Math.min(1, playerPosition.z - -1); break;
+            }
+
+            camera.position.set(playerPosition.x * 5, 2, playerPosition.z * 5);
+            camera.lookAt(0, 0, 0);
+        });
+
+        window.addEventListener('click', onMouseClick);
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+</html>
