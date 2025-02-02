@@ -1,9 +1,13 @@
-The following is the code of a first-person 3d game where the player flys down into a tunnel and has to avoid objects on a 3x3 grid. 
-The code already has a top ten list which is saved localy on the computer.
-Please change this so that the data is sent to a php script which stores the data on a web server in a simple topScores.json text file.
-At the beginning, this online data has to be fetched so every user sees the same top ten list.
-Currently the top ten list only contains a name and the score. When prompted, also add an input field for an email address and a checkbox if the player is female.
-This is the code you have to change:
+prompt for https://chat.deepseek.com:
+
+**The following is the code of a first-person 3d game where the player flys down into a tunnel and has to avoid objects on a 3x3 grid. \
+The code already has a top ten list which is saved localy on the computer.\
+Please change this so that the data is sent to a php script which stores the data on a web server in a simple topScores.json text file.\
+At the beginning, this online data has to be fetched so every user sees the same top ten list.\
+Currently the top ten list only contains a name and the score. When prompted, also add an input field for an email address and a checkbox if the player is female.\
+This is the code you have to change:**
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -415,3 +419,4 @@ This is the code you have to change:
     </script>
 </body>
 </html>
+```
