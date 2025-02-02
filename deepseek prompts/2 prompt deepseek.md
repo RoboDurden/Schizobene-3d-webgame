@@ -1,5 +1,6 @@
 prompt for https://chat.deepseek.com:
-```Create the code for a 3d web game with first-person viewpoint.
+
+**Create the code for a 3d web game with first-person viewpoint.
 For each level, the player has to fly through a tunnel where he can move sideways (x = left, right and z = up, down) with the arrow keys on a 3x3 grid. The length of the tunnel is 18 units. The player starts at y=0.
 At every  y=1, 3, 5, 7, 9, 11, 13 and 15 there are 8 objects placed on the 3x3 grid so that there is only one way to fly past the obstacles. The objects should be so big that they fill 90% of their grid position. So the 8 objects act like a wall with only the empty position to fly through.
 As it is a first-person viewpoint game, when the player moves one unit to the side, all the objects are seen to shift in the opposite direction.
@@ -12,7 +13,7 @@ And this time, the player has to move sideways to be in that x-z position that w
 For every wall passed a score counter increments. Passing the ninth wall adds 2 to the counter. So the player gains 10 points for every level/tunnel.
 The player has three lives. He loses a life when he does not shift sideways to the only position that allows him to pass a wall. If he then still has a life, the current level restarts after a hit on the keyboard. Otherwise it is game over and he can enter his name in a top-ten list if his socre is high enough.
 After which hitting a key restarts the game with 5 levels lower than the one he just lost. Or level 0 if he had not reached level 6 or higher.
-```
+**
 
 
 Okay, I need to create a 3D web game with a first-person viewpoint where the player flies through a tunnel. Let me break down the requirements step by step.
