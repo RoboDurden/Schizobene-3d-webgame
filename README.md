@@ -1,4 +1,4 @@
-# Schizobene-3d-webgame (with DeepSeek)
+# Schizobene-3d-webgame (with Deepseek)
 started as a https://chat.DeepSeek.com experiment :-)
 
 because stupid tech reviews simply prompted `write the game "snake" in python` an existing game :-( https://youtu.be/bOsvI3HYHgI?si=hdbKXkB9Yqc6ijBj&t=160
