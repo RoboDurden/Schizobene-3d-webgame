@@ -799,7 +799,7 @@ The code provided is a starting point but needs refinement in collision detectio
 Here's the complete code for the 3D tunnel game:
 html
 Copy
-
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1092,7 +1092,7 @@ Copy
     </script>
 </body>
 </html>
-
+```
 Run HTML
 
 This code creates a complete 3D tunnel game with all the specified features:
