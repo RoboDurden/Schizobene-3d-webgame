@@ -1,5 +1,5 @@
 # Schizobene-3d-webgame
-started as a chat.DeepSeek.com experiment :-)
+started as a https://chat.DeepSeek.com experiment :-)
 
 because stupid tech reviews simply prompted `write the game "snake" in python` an existing game :-( https://youtu.be/bOsvI3HYHgI?si=hdbKXkB9Yqc6ijBj&t=160
 or `write the game "Tetris" in python` for which there are hundreds of tetris clones in the training data: https://youtu.be/bOsvI3HYHgI?si=BizX1apY6EnxcTOk&t=379
