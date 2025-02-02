@@ -4,7 +4,7 @@ started as a chat.DeepSeek.com experiment :-)
 because stupid tech reviews simply prompted `write the game "snake" in python` an existing game :-( https://youtu.be/bOsvI3HYHgI?si=hdbKXkB9Yqc6ijBj&t=160
 or `write the game "Tetris" in python` for which there are hundreds of tetris clones in the training data: https://youtu.be/bOsvI3HYHgI?si=BizX1apY6EnxcTOk&t=379
 
-So i decided to prompt DeepSeek for a new game:
+## So i decided to prompt DeepSeek for a new game:
 
 first prompt [1 prompt deepseek.md](https://github.com/RoboDurden/Schizobene-3d-webgame/blob/main/deepseek%20prompts/1%20prompt%20deepseek.md)
 
