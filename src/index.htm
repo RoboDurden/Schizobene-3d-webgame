@@ -641,7 +641,7 @@
                     iCounter = 10;
                     break;
                 case "d":
-                    iDemo = 1;
+                    if (gameStage & STAGE_HELP) iDemo = 1;
                     break;
                 case "p":
                     if (gameStage & (STAGE_RUNNING | STAGE_DEMO))
