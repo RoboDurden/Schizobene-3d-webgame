@@ -64,6 +64,25 @@
             border-radius: 10px;
         }
 
+        #toptenDemo {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #bbbbbb;
+            text-align: center;
+            border-radius: 10px;
+        }
+        td
+        {
+            padding-right: 10pt;
+        }
+
+        
+
         #gameOver input[type="email"],
         #gameOver label {
             margin: 5px 0;
@@ -115,6 +134,7 @@
             <table id="topten"></table>
         </center>
     </div>
+    <table id="toptenDemo"></table>
 
     <div class="Help" id="Help1" style="top:5%;"></div>
 
@@ -217,6 +237,10 @@
             createFinalWall((iRegularWalls) * distance - playerZ);
 
             currentSpeed = 0.02 + level * 0.004;
+
+            if (gameStage == STAGE_DEMO)
+                updateTopTenDisplay("toptenDemo");
+
         }
 
         function createShuffledObjectTypes() {
@@ -350,13 +374,11 @@
             //rLight.intensity = 1;
             playerZ = -4; playerX = playerY = 0;
 
-            let r = document.getElementById('Help1');
+            let r = Display('Help1');
             r.innerHTML = `<h2>${sTop}</h2>`;
-            r.style.display = 'block';
 
-            r = document.getElementById('Help2');
+            r = Display('Help2');
             r.innerHTML = "<h2>" + sBottom + '<form onSubmit="StartGame(); return false;"><input type="submit" id="startGame" value="start game"></input></form></h2>';
-            r.style.display = 'block';
             document.getElementById('startGame').focus();
         }
 
@@ -385,12 +407,13 @@
             aGameHelp.forEach(mesh => scene.remove(mesh));
             aGameHelp = [];
 
-            document.getElementById('Help1').style.display = 'none';
-            document.getElementById('Help2').style.display = 'none';
+            Display('Help1',0);
+            Display('Help2',0);
+
 
             setTimeout(() => {
-                generateLevel();
                 gameStage = iStage;
+                generateLevel();
             }, 100);
         }
 
@@ -543,7 +566,7 @@
         function CursorRemove()
         {
             gridVisible = false;
-            document.getElementById('touchGrid').style.display = 'none';
+            Display('touchGrid',0);
 
             if (oCursor)    
             {
@@ -559,7 +582,7 @@
             if (!gridVisible) 
             {
                 gridVisible = true;
-                document.getElementById('touchGrid').style.display = 'block';
+                Display('touchGrid');
             }
 
             if (oCursor)    
@@ -767,7 +790,7 @@
 
                         updateTopTenDisplay();
 
-                        document.getElementById('gameOver').style.display = 'block';
+                        Display('gameOver');
                         document.getElementById('finalLevel').textContent = level;
                         document.getElementById('playerName').focus();
                         gameStage = STAGE_SCORES;
@@ -796,7 +819,6 @@
                 const z = walls[0].mesh.position.z -0.5;
                 oCursor.position.set(playerX2,playerY2,z);
                 const scale = Math.min(1,(z-playerZ)/distance);
-                //iBug = scale;
                 oCursor.scale.set(scale, scale, scale);
                 
             }
@@ -809,7 +831,6 @@
                 if (gameStage & STAGE_DEMO) {
                     let fDelta = (Math.abs(((Date.now() / 2 + 100) % 400) - 200) - 100) / 100;   // repeats from +100 to -300 to +100 :-)
                     let fDelta2 = (Math.abs(((Date.now() / 2 + 200) % 400) - 200) - 100) / 100;   // repeats from +100 to -300 to +100 :-)
-                    //iBug = fDelta;
                     if (wall.type.bShape) {
                         scale += -0.1 - 0.1 * fDelta;
                     }
@@ -836,13 +857,19 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            //iBug = iGameType;
-
             let iTime = Date.now();
             let iDelay = iTime - iTimeLast;
             if (iDelay > 1000) iDelay = 17;
-            //iBug = iDelay;
             iTimeLast = iTime;
+
+            if (gameStage == STAGE_DEMO)
+            {
+                if (playerZ > (-0.5 + level*distance*0.5)   )
+                {
+                    Display('toptenDemo',0);
+                }
+            }
+
 
             updateCamera();
             if (gameStage & (STAGE_RUNNING | STAGE_DEMO)) {
@@ -918,7 +945,7 @@
         }
 
         // Update display function for new fields
-        function updateTopTenDisplay() {
+        function updateTopTenDisplay(sId="topten") {
             let sTopTen = "";
             if (topScores[iGameType]) {
                 sTopTen = '<tr><th>level</th><th>Date</th><th>Name</th><th>Email</th><th>Schizo</th></tr>';
@@ -926,7 +953,8 @@
                     sTopTen += `<tr><td>${o.level}</td><td>${o.time}</td><td>${o.name}</td><td>${o.email ? '*' : ''}</td><td>${o.schizo === '1' ? '*' : ''}</td></tr>`;
                 });
             }
-            document.getElementById('topten').innerHTML = sTopTen;
+            const r = Display(sId);
+            r.innerHTML = sTopTen;
         }
 
         async function saveScore() {
@@ -958,7 +986,7 @@
             }
 
             // Reset game
-            document.getElementById('gameOver').style.display = 'none';
+            Display('gameOver',0);
             NewGame();
         }
 
@@ -982,6 +1010,14 @@
         });
 
         fetchTopScores();
+
+        function Display(sId,bDisplay=1)
+        {
+            const r = document.getElementById(sId);
+            r.style.display = bDisplay ? 'block' : 'none';
+            return r;
+        }
+                    
 
     </script>
 </body>
