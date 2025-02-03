@@ -2,32 +2,31 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+define('C_sLogFile',	'update.log');
 define('C_bCacheLog',	0);
 define('C_bNoLog',		0);
-define('C_sLogFile',	'log.txt');
-
-
 $g_sMess 	= '';
 $g_iStartTime	= microtime_float();
 x("hello world :-) " . Timestamp(),1);
 
 
-define('FILENAME',"topScores.json");
+define('FILENAME',"db.php");
 
-
-$sData = file_get_contents(FILENAME);
-if (!$sData)
-	$aData = array();
-else
-	$aData = (array)json_decode($sData);
+if (file_exists(FILENAME))	
+{
+    $sData = file_get_contents(FILENAME);
+    $sData = substr($sData,8,strlen($sData)-13);
+    $aData = (array)json_decode($sData);
+}
+else 	$aData = array();
 
 x("db:\n".print_r($aData,true));
 
+
+
+
 $sInput = file_get_contents('php://input');
-
 //$sInput = '{"type":0,"name":"test8","level":5,"email":"","schizo":"0"}';
-
-
 x("input:\n$sInput");
 if ($sInput)
 {
@@ -44,26 +43,39 @@ if ($sInput)
 	$aData[$iType][] = $oAdd;
 
 	usort($aData[$iType], "cmp");
+	//x("sorted:\n".print_r($aData,true));
 
+	$sSave = json_encode($aData);
+	$sSave = str_replace("]," , "],\n\n",str_replace("},{" , "},\n{", $sSave));
+	
+	file_put_contents(FILENAME,"<?php/*\n$sSave\n*/?>");
+	
+	x("saved:\nsSave");
 }
 x("final:\n".print_r($aData,true));
 
 
-//x("sorted:\n".print_r($aData,true));
 
-$sSave = json_encode($aData);
-$sSave = str_replace("]," , "],\n\n",str_replace("},{" , "},\n{", $sSave));
+// return top ten for each game type as json
+foreach($aData AS $i => $a)
+{
+    $a10 = array_splice($a,0,10);
+    foreach($a10 AS $o) if ($o->email)  $o->email = "*";
+    $aData[$i] = $a10;
+}
 
-file_put_contents(FILENAME,$sSave);
+echo json_encode($aData);
 
-x("saved:\nsSave");
 xx();
+
 
 function cmp($a, $b) 
 {
 	if ($a->level ==  $b->level)	return 0;
 	return ($a->level >  $b->level) ? -1 : 1;	
 }
+
+// common functions /////
 
 function Timestamp($iUTime=0)
 {
@@ -133,5 +145,6 @@ function xx()
 		fclose($hfile);
 	}
 }
+
 
 ?>

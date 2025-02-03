@@ -124,7 +124,7 @@
     <div id="gameOver">
         <h2>Game Over!</h2>
         <p>level: <span id="finalLevel"></span></p>
-        <form onSubmit="saveScore(); return false;">
+        <form onSubmit="UpdateDatabase(); return false;">
             <input type="text" id="playerName" placeholder="Enter your name">
             <input type="email" id="playerEmail" placeholder="email if you like">
             <label><input type="checkbox" id="playerSchizo"> did an inner voice help ?</label>
@@ -935,7 +935,7 @@
             if (scene.background.g>0) scene.background.g -= 0.01;
             if (scene.background.b>0) scene.background.b -= 0.01;
         }
-
+/*
         async function fetchTopScores() {
             try {
                 const response = await fetch('get_scores.php');
@@ -944,43 +944,50 @@
                 console.error('Error fetching scores:', error);
             }
         }
-
+*/
         // Update display function for new fields
         function updateTopTenDisplay(sId="topten") {
             let sTopTen = "";
             if (topScores[iGameType]) {
                 sTopTen = '<tr><th>level</th><th>Date</th><th>Name</th><th>Email</th><th>Schizo</th></tr>';
                 topScores[iGameType].forEach(o => {
-                    sTopTen += `<tr><td>${o.level}</td><td>${o.time}</td><td>${o.name}</td><td>${o.email ? '*' : ''}</td><td>${o.schizo === '1' ? '*' : ''}</td></tr>`;
+                    sTopTen += `<tr><td>${o.level}</td><td>${o.time}</td><td>${o.name}</td><td>${o.email}</td><td>${o.schizo === '1' ? '*' : ''}</td></tr>`;
                 });
             }
             const r = Display(sId);
             r.innerHTML = sTopTen;
         }
 
-        async function saveScore() {
-            const name = document.getElementById('playerName').value.trim() || 'Anonymous';
-            const email = document.getElementById('playerEmail').value.trim();
-            const bShizo = document.getElementById('playerSchizo').checked;
-
-            try {
-                const response = await fetch('save_score.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
+        async function UpdateDatabase(bSave=1) 
+        {
+            let sBody = '';
+            if (bSave)
+            {
+                const name = document.getElementById('playerName').value.trim() || 'Anonymous';
+                const email = document.getElementById('playerEmail').value.trim();
+                const bShizo = document.getElementById('playerSchizo').checked;
+                sBody = JSON.stringify({
                         type: iGameType,
                         name: name,
                         level: level,
                         email: email,
                         schizo: bShizo ? 1 : 0
-                    })
+                    });                
+            }
+
+            try {
+                const response = await fetch('update_db.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }, 
+                    body: sBody
                 });
+                topScores = await response.json();
 
                 if (!response.ok) throw new Error('Save failed');
 
-                fetchTopScores();
+                //fetchTopScores();
             } catch (error) {
                 console.error('Save error:', error);
                 return;
@@ -1010,7 +1017,8 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        fetchTopScores();
+        UpdateDatabase(0);
+        //fetchTopScores();
 
         function Display(sId,bDisplay=1)
         {
