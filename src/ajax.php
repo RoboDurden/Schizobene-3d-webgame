@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-define('C_sLogFile',	'update.log');
+define('C_sLogFile',	'ajax.log');
 define('C_bCacheLog',	0);
 define('C_bNoLog',		0);
 $g_sMess 	= '';

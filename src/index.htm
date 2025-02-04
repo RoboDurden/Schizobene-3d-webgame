@@ -976,13 +976,8 @@
             }
 
             try {
-                const response = await fetch('update_db.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }, 
-                    body: sBody
-                });
+                const response = await fetch('ajax.php', { method: 'POST', headers: {'Content-Type': 'application/json',}, 
+                                                            body: sBody });
                 topScores = await response.json();
 
                 if (!response.ok) throw new Error('Save failed');
