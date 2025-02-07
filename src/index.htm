@@ -308,7 +308,6 @@
                     ], 0);
                     break;
                 case 1:
-                case 3:
                     sTop = "player: geometry in final wall is last of the three possible geometries. Ignore the first  wall.";
                     sBottom = "inner voice: color in final wall is last of the three possible colors. Ignore the first  wall.";
                     _HelpAddLine([
@@ -343,7 +342,7 @@
                     break;
 
                 case 2:
-                case 4:
+                case 3:
                     iRegularWalls = 9;
                     sTop = "player: geometry in final wall follows right after you have passed all the three possible geometries. Ignore the first  wall.";
                     sBottom = "inner voice: color in final wall  follows right after you have passed all the three possible colors. Ignore the first  wall.";
@@ -444,7 +443,6 @@
                     return;
 
                 case 1:
-                case 3:
                     for (let i = 1; i < 7; i++) {
                         let r = objectTypes[i];
                         if (aShape.indexOf(r.shape) > -1) continue;
@@ -468,7 +466,7 @@
                     break;
 
                 case 2:
-                case 4:
+                case 3:
                     for (let i = 1; i < 7; i++) {
                         let r = objectTypes[i];
                         if (aShape.indexOf(r.shape) > -1) continue;
@@ -654,14 +652,14 @@
             switch (key) {
                 case "ArrowRight":
                     if (gameStage == STAGE_HELP) {
-                        iGameType = (iGameType + 1) % 5;
+                        iGameType = (iGameType + 1) % 4;
                         NewGame();
                     }
                     else if (playerX > -1) playerX--;
                     break;
                 case "ArrowLeft":
                     if (gameStage == STAGE_HELP) {
-                        iGameType = (iGameType + 4) % 5;
+                        iGameType = (iGameType + 3) % 4;
                         NewGame();
                     }
                     else if (playerX < 1) playerX++;
