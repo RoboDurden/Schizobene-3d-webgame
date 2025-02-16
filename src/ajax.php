@@ -2,12 +2,17 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+define ('C_bOnline', (	($_SERVER['HTTP_HOST'] != 'localhost') && ($_SERVER['SERVER_ADDR'] != '127.0.0.1' ) )	) ;
+
 define('C_sLogFile',	'ajax.log');
 define('C_bCacheLog',	0);
 define('C_bNoLog',		0);
 $g_sMess 	= '';
 $g_iStartTime	= microtime_float();
 x("hello world :-) " . Timestamp(),1);
+
+//foreach($_SERVER AS $sKey => $sValue)	x("_SERVER: $sKey => "._LogVar($sValue)."<br>");
+//foreach($_ENV AS $sKey => $sValue)	x("_ENV: $sKey => $sValue<br>");
 
 
 define('FILENAME',"db.php");
@@ -20,7 +25,7 @@ if (file_exists(FILENAME))
 }
 else 	$aData = array();
 
-x("db:\n".print_r($aData,true));
+//x("db:\n".print_r($aData,true));
 
 
 
@@ -50,9 +55,15 @@ if ($sInput)
 	
 	file_put_contents(FILENAME,"<?php/*\n$sSave\n*/?>");
 	
-	x("saved:\nsSave");
+	//x("saved:\nsSave");
+
+	//x("send email to robo ? '{$oAdd->name}'");
+	if (	(stripos($oAdd->name,'robo') !== 0) && (stripos($oAdd->name,'roland') !== 0)	)
+	{
+		MailTo("roland@robosoft.de","schizobene game $iType: $oAdd->name/$oAdd->schizo = $oAdd->level",json_encode($oAdd));	
+	}
 }
-x("final:\n".print_r($aData,true));
+//x("final:\n".print_r($aData,true));
 
 
 
@@ -144,6 +155,48 @@ function xx()
 		fwrite($hfile, $g_sMess);
 		fclose($hfile);
 	}
+}
+
+function MailTo($to,$subject,$message)
+{
+	$headers = 'From: roland@schizobene.de' . "\r\n" .
+	    'Reply-To: roland@schizobene.de' . "\r\n" .
+	    'X-Mailer: PHP/' . phpversion();
+
+		$message .= "\nHTTP_ORIGIN: ".$_SERVER['HTTP_ORIGIN'];
+
+	$aTo = explode(',',$to);
+	$iSent = 0;
+	foreach($aTo AS $sTo)
+	{
+		if (C_bOnline)
+		{
+			if (mail($sTo, $subject, $message, $headers))	
+			{
+				x("notification sent to $sTo");
+				$iSent++;
+			}
+		}
+		else
+			x("EmailTo($sTo,$subject); iSent=$iSent\n$message");
+	}
+	return $iSent;
+}
+function _LogVar(&$v,$iLen=100)
+{
+	$s = "";
+	if (is_array($v))
+	{
+		$s = implode(",",
+			array_map(
+				function($o){return is_array($o) ? "array" : (string)$o;}
+				, $v) ) ;
+	}
+	else $s = strval($v);
+		
+	if (strlen($s)> $iLen)
+		$s = substr($s,0,$iLen) . "..";
+	return $s;
 }
 
 
